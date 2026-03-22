@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery | Aibel Builders</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Gallery specific styles */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+            cursor: pointer;
+            aspect-ratio: 1;
+            /* Square thumbnails */
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.08);
+        }
+
+        /* Modal styling for lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .lightbox.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90vh;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            font-size: 3rem;
+            color: #fff;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .lightbox-close:hover {
+            color: var(--accent);
+        }
+    </style>
+</head>
+
+<body class="inner-page">
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container top-bar-content">
+            <div class="top-contact">
+                <a href="tel:+918075934563">Phone: 8075934563 | 9048891982</a>
+                <a href="mailto:aibeldibin@gmail.com">Email: aibeldibin@gmail.com</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Aibel<span>.Builders</span></a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="projects.html">Projects</a></li>
+                <li><a href="gallery.html" class="active">Gallery</a></li>
+                <li><a href="careers.html">Careers</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header"
+        style="background-image: linear-gradient(rgba(5,5,5,0.7), rgba(5,5,5,0.9)), url('assets/arch_project2.png');">
+        <div class="container reveal fade-up">
+            <h1>Gallery</h1>
+            <p>A visual journey through our finest structural accomplishments.</p>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="content-section">
+        <div class="container">
+            <div class="section-header reveal fade-up">
+                <h2>Our Architecture</h2>
+            </div>
+
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- Hardcoded Images -->
+                <div class="gallery-item reveal fade-up delay-1" onclick="openLightbox('assets/arch_hero.png')">
+                    <img src="assets/arch_hero.png" alt="Gallery Image 1">
+                </div>
+                <div class="gallery-item reveal fade-up delay-2" onclick="openLightbox('assets/arch_project1.png')">
+                    <img src="assets/arch_project1.png" alt="Gallery Image 2">
+                </div>
+                <div class="gallery-item reveal fade-up delay-3" onclick="openLightbox('assets/arch_project2.png')">
+                    <img src="assets/arch_project2.png" alt="Gallery Image 3">
+                </div>
+                <!-- Dynamic Images from localStorage will be injected here -->
+            </div>
+
+            <!-- Hidden Admin Upload Form (For Demonstration) -->
+            <div id="adminPanel"
+                style="display: none; margin-top: 5rem; padding: 2rem; border-top: 1px solid var(--glass-border);">
+                <h3 style="color: var(--accent); margin-bottom: 1rem;">Administrator Upload Panel</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">(Note: As this is a static
+                    site, uploaded images are saved temporarily in your local browser storage for demonstration.)</p>
+                <div class="input-group" style="display: flex; gap: 1rem; align-items: center;">
+                    <input type="file" id="imageUploadInput" accept="image/png, image/jpeg, image/webp"
+                        style="color: white;">
+                    <button class="btn-outline" onclick="uploadImage()">Upload Image</button>
+                    <button class="btn-outline" onclick="clearDynamicGallery()"
+                        style="border-color: #f44336; color: #f44336;">Clear Uploads</button>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="btn-outline"
+                    onclick="document.getElementById('adminPanel').style.display = 'block'; this.style.display = 'none';"
+                    style="font-size: 0.7rem; padding: 0.3rem 0.8rem; border-color: #333; color: #555;">Admin
+                    Access</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <img id="lightbox-img" src="" alt="Expanded Image">
+    </div>
+
+    <!-- Global Footer -->
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-brand footer-col">
+                    <h2>AIBEL<span>.BUILDERS</span></h2>
+                    <p>&copy; 2026 AIBEL.BUILDERS.<br>All rights reserved.</p>
+                    <div class="social-links">
+                        <a href="#">Instagram</a>
+                        <a href="#">LinkedIn</a>
+                        <a href="#">Behance</a>
+                    </div>
+                </div>
+
+                <!-- Quick Links Column -->
+                <div class="footer-links footer-col">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="projects.html">Projects</a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="careers.html">Careers</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Details Column -->
+                <div class="footer-contact footer-col">
+                    <h3>Contact Us</h3>
+                    <address>Pulikkan HyperMarket<br>1st Floor, Bazar Road,<br>Puthukkad, Thrissur</address>
+                    <div class="footer-contact-methods">
+                        <a href="tel:+918075934563">Phone: 8075934563 | 9048891982</a>
+                        <a href="mailto:aibeldibin@gmail.com">Email: aibeldibin@gmail.com</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Lightbox functionality
+        function openLightbox(src) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox').classList.add('active');
+        }
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+        }
+        document.getElementById('lightbox').addEventListener('click', function (e) {
+            if (e.target === this) closeLightbox();
+        });
+
+        // Dynamic Upload Functionality via LocalStorage
+        const galleryGrid = document.getElementById('galleryGrid');
+
+        function loadDynamicImages() {
+            const dynamicImages = JSON.parse(localStorage.getItem('aibelGallery')) || [];
+            dynamicImages.forEach(imgData => {
+                appendImageToGallery(imgData);
+            });
+        }
+
+        function appendImageToGallery(imgData) {
+            const div = document.createElement('div');
+            div.className = 'gallery-item reveal active fade-up';
+            div.onclick = () => openLightbox(imgData);
+
+            const img = document.createElement('img');
+            img.src = imgData;
+            img.alt = 'Uploaded Architecture Image';
+
+            div.appendChild(img);
+            galleryGrid.appendChild(div);
+        }
+
+        function uploadImage() {
+            const input = document.getElementById('imageUploadInput');
+            if (!input.files || input.files.length === 0) return alert('Please select an image first.');
+
+            const file = input.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const base64Img = e.target.result;
+
+                // Save to localStorage
+                const dynamicImages = JSON.parse(localStorage.getItem('aibelGallery')) || [];
+                dynamicImages.push(base64Img);
+
+                try {
+                    localStorage.setItem('aibelGallery', JSON.stringify(dynamicImages));
+                    appendImageToGallery(base64Img);
+                    input.value = ''; // Reset input
+                    alert('Image uploaded successfully to dynamic gallery!');
+                } catch (err) {
+                    alert('Upload failed: Storage limit exceeded for browser (LocalStorage). For unlimited uploads, a true backend is required.');
+                }
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function clearDynamicGallery() {
+            localStorage.removeItem('aibelGallery');
+            location.reload();
+        }
+
+        // Initialize display of existing uploaded images on load
+        loadDynamicImages();
+    </script>
+</body>
+
+</html>
