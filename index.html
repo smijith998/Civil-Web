@@ -85,33 +85,8 @@
                 <h2>Featured Works</h2>
                 <p>Explore our curation of award-winning structures.</p>
             </div>
-            <div class="projects-grid">
-                <!-- Project 1 -->
-                <div class="project-card reveal fade-up delay-1">
-                    <div class="project-img-wrapper">
-                        <img src="assets/arch_project1.png" alt="Horizon Villa">
-                        <div class="project-overlay">
-                            <a href="projects.html" class="view-btn">View Details</a>
-                        </div>
-                    </div>
-                    <div class="project-info">
-                        <h3>Horizon Villa</h3>
-                        <span>Residential / 2025</span>
-                    </div>
-                </div>
-                <!-- Project 2 -->
-                <div class="project-card reveal fade-up delay-2">
-                    <div class="project-img-wrapper">
-                        <img src="assets/arch_hero.png" alt="Nexus Corporate HQ">
-                        <div class="project-overlay">
-                            <a href="projects.html" class="view-btn">View Details</a>
-                        </div>
-                    </div>
-                    <div class="project-info">
-                        <h3>Nexus Corporate HQ</h3>
-                        <span>Commercial / 2026</span>
-                    </div>
-                </div>
+            <div class="projects-grid" id="featured-projects-grid">
+                <!-- Dynamically populated from projects-data.js via script.js -->
             </div>
             
             <div class="reveal fade-up delay-3" style="text-align: center; margin-top: 4rem;">
@@ -161,6 +136,7 @@
         </div>
     </footer>
 
+    <script src="projects-data.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

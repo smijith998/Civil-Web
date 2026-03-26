@@ -132,39 +132,8 @@
                 <h2>Our Architecture</h2>
             </div>
 
-            <div class="gallery-grid" id="galleryGrid">
-                <!-- Hardcoded Images -->
-                <div class="gallery-item reveal fade-up delay-1" onclick="openLightbox('assets/arch_hero.png')">
-                    <img src="assets/arch_hero.png" alt="Gallery Image 1">
-                </div>
-                <div class="gallery-item reveal fade-up delay-2" onclick="openLightbox('assets/arch_project1.png')">
-                    <img src="assets/arch_project1.png" alt="Gallery Image 2">
-                </div>
-                <div class="gallery-item reveal fade-up delay-3" onclick="openLightbox('assets/arch_project2.png')">
-                    <img src="assets/arch_project2.png" alt="Gallery Image 3">
-                </div>
-                <!-- Dynamic Images from localStorage will be injected here -->
-            </div>
-
-            <!-- Hidden Admin Upload Form (For Demonstration) -->
-            <div id="adminPanel"
-                style="display: none; margin-top: 5rem; padding: 2rem; border-top: 1px solid var(--glass-border);">
-                <h3 style="color: var(--accent); margin-bottom: 1rem;">Administrator Upload Panel</h3>
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">(Note: As this is a static
-                    site, uploaded images are saved temporarily in your local browser storage for demonstration.)</p>
-                <div class="input-group" style="display: flex; gap: 1rem; align-items: center;">
-                    <input type="file" id="imageUploadInput" accept="image/png, image/jpeg, image/webp"
-                        style="color: white;">
-                    <button class="btn-outline" onclick="uploadImage()">Upload Image</button>
-                    <button class="btn-outline" onclick="clearDynamicGallery()"
-                        style="border-color: #f44336; color: #f44336;">Clear Uploads</button>
-                </div>
-            </div>
-            <div style="text-align: center; margin-top: 2rem;">
-                <button class="btn-outline"
-                    onclick="document.getElementById('adminPanel').style.display = 'block'; this.style.display = 'none';"
-                    style="font-size: 0.7rem; padding: 0.3rem 0.8rem; border-color: #333; color: #555;">Admin
-                    Access</button>
+            <div id="galleryContainer">
+                <!-- Grouped Gallery Sections injected here -->
             </div>
         </div>
     </section>
@@ -216,6 +185,7 @@
         </div>
     </footer>
 
+    <script src="projects-data.js"></script>
     <script src="script.js"></script>
     <script>
         // Lightbox functionality
@@ -230,63 +200,55 @@
             if (e.target === this) closeLightbox();
         });
 
-        // Dynamic Upload Functionality via LocalStorage
-        const galleryGrid = document.getElementById('galleryGrid');
+        const galleryContainer = document.getElementById('galleryContainer');
 
-        function loadDynamicImages() {
-            const dynamicImages = JSON.parse(localStorage.getItem('aibelGallery')) || [];
-            dynamicImages.forEach(imgData => {
-                appendImageToGallery(imgData);
+        function loadCategorizedGallery() {
+            if (typeof aibelProjects === 'undefined') return;
+
+            // Combine both completed and upcoming projects
+            const allProjects = [...aibelProjects];
+            if (typeof aibelUpcomingProjects !== 'undefined') {
+                allProjects.push(...aibelUpcomingProjects);
+            }
+
+            allProjects.forEach((project) => {
+                if (!project.images || project.images.length === 0) return;
+
+                // Create wrapper section for this project
+                const section = document.createElement('div');
+                section.style.marginBottom = '4rem';
+
+                // Add Project Title
+                const title = document.createElement('h3');
+                title.className = 'gallery-category-title reveal fade-up active';
+                title.innerText = project.title;
+                section.appendChild(title);
+
+                // Add images grid
+                const grid = document.createElement('div');
+                grid.className = 'gallery-grid';
+                grid.style.marginTop = '1.5rem';
+                
+                project.images.forEach(imgSrc => {
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item reveal active fade-up';
+                    item.onclick = () => openLightbox(imgSrc);
+
+                    const img = document.createElement('img');
+                    img.src = imgSrc;
+                    img.alt = project.title;
+
+                    item.appendChild(img);
+                    grid.appendChild(item);
+                });
+
+                section.appendChild(grid);
+                galleryContainer.appendChild(section);
             });
         }
 
-        function appendImageToGallery(imgData) {
-            const div = document.createElement('div');
-            div.className = 'gallery-item reveal active fade-up';
-            div.onclick = () => openLightbox(imgData);
-
-            const img = document.createElement('img');
-            img.src = imgData;
-            img.alt = 'Uploaded Architecture Image';
-
-            div.appendChild(img);
-            galleryGrid.appendChild(div);
-        }
-
-        function uploadImage() {
-            const input = document.getElementById('imageUploadInput');
-            if (!input.files || input.files.length === 0) return alert('Please select an image first.');
-
-            const file = input.files[0];
-            const reader = new FileReader();
-
-            reader.onload = function (e) {
-                const base64Img = e.target.result;
-
-                // Save to localStorage
-                const dynamicImages = JSON.parse(localStorage.getItem('aibelGallery')) || [];
-                dynamicImages.push(base64Img);
-
-                try {
-                    localStorage.setItem('aibelGallery', JSON.stringify(dynamicImages));
-                    appendImageToGallery(base64Img);
-                    input.value = ''; // Reset input
-                    alert('Image uploaded successfully to dynamic gallery!');
-                } catch (err) {
-                    alert('Upload failed: Storage limit exceeded for browser (LocalStorage). For unlimited uploads, a true backend is required.');
-                }
-            };
-
-            reader.readAsDataURL(file);
-        }
-
-        function clearDynamicGallery() {
-            localStorage.removeItem('aibelGallery');
-            location.reload();
-        }
-
-        // Initialize display of existing uploaded images on load
-        loadDynamicImages();
+        // Initialize
+        loadCategorizedGallery();
     </script>
 </body>
 

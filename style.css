@@ -532,6 +532,16 @@ section p {
     letter-spacing: 1px;
 }
 
+/* Gallery Category Headers */
+.gallery-category-title {
+    font-size: 2rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 0.5rem;
+    display: inline-block;
+}
+
 /* Careers Section */
 .careers-section {
     background: #080808;
@@ -820,3 +830,63 @@ footer {
         grid-template-columns: 1fr;
     }
 }
+
+/* Project Modal / Lightbox Global Styles */
+.lightbox {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: flex-start;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    overflow-y: auto;
+    padding: 4rem 1rem;
+}
+
+.lightbox.active {
+    display: flex;
+    opacity: 1;
+}
+
+.lightbox-close {
+    position: fixed;
+    top: 20px; right: 40px;
+    font-size: 3rem; color: #fff;
+    cursor: pointer; z-index: 2001;
+    transition: color 0.3s;
+}
+
+.lightbox-close:hover { color: var(--accent); }
+
+.modal-container {
+    background: #050505;
+    width: 100%; max-width: 1000px;
+    margin: auto;
+    border: 1px solid var(--glass-border);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-info {
+    padding: 3rem;
+    border-bottom: 1px solid var(--glass-border);
+    text-align: center;
+}
+
+.modal-info h2 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.modal-meta { color: var(--accent); font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; }
+.modal-info p#modalDescription { max-width: 700px; margin: 0 auto; color: var(--text-muted); }
+
+.modal-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1px; background: var(--glass-border);
+}
+
+.modal-gallery img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4/3; }
