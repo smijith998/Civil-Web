@@ -1,0 +1,85 @@
+# Convert Aibel Builders Static Site → WordPress Theme
+
+The existing site is a static HTML/CSS/JS website for **Aibel Builders**. The goal is to convert it into a self-contained WordPress theme so that admin users can manage **Projects** (including gallery images) and **Career listings** through the standard WordPress dashboard — no code editing required.
+
+---
+
+## User Review Required
+
+> [!IMPORTANT]
+> This conversion produces a **WordPress theme folder** (`aibel-builders-theme/`). To use it you need a WordPress installation (local via LocalWP/WAMP, or a hosting server with WordPress). The theme includes **no plugins** — it registers its own Custom Post Types (CPTs) and meta boxes using pure PHP, so it works out-of-the-box on a bare WordPress install.
+
+> [!WARNING]
+> Your existing GitHub Pages static site will remain untouched. The new `/aibel-builders-theme/` folder must be uploaded to your WordPress server's `wp-content/themes/` directory.
+
+---
+
+## Proposed Changes
+
+### WordPress Custom Theme
+
+The entire deliverable is a new folder: `Civil-Web/aibel-builders-theme/`
+
+#### [NEW] Theme Root Files
+
+| File | Purpose |
+|---|---|
+| [style.css](file:///c:/Users/SMIJITH/OneDrive/Civil-Web/Civil-Web/style.css) | Theme declaration header + base styles copied from existing [style.css](file:///c:/Users/SMIJITH/OneDrive/Civil-Web/Civil-Web/style.css) |
+| `functions.php` | Register CPTs, meta boxes, enqueue scripts/styles |
+| `index.php` | WordPress fallback template |
+| `header.php` | Shared nav + top-bar from all HTML files |
+| `footer.php` | Shared footer from all HTML files |
+| `front-page.php` | Homepage (index.html content) |
+| `page-about.php` | About page |
+| `page-contact.php` | Contact page |
+
+#### [NEW] Dynamic Page Templates (Key Pages)
+
+| File | Maps to |
+|---|---|
+| `page-projects.php` | [projects.html](file:///c:/Users/SMIJITH/OneDrive/Civil-Web/Civil-Web/projects.html) — loops over `project` CPT |
+| `page-gallery.php` | [gallery.html](file:///c:/Users/SMIJITH/OneDrive/Civil-Web/Civil-Web/gallery.html) — loops over all projects + images |
+| `page-careers.php` | [careers.html](file:///c:/Users/SMIJITH/OneDrive/Civil-Web/Civil-Web/careers.html) — loops over `career` CPT |
+| `single-project.php` | Single project detail page |
+
+#### [NEW] Custom Post Types (in `functions.php`)
+
+**`project` CPT** — Admin can add/edit:
+- Title, Category (taxonomy or text), Year, Description, Status (Completed/Upcoming)
+- Multiple images via WordPress built-in **Gallery** (attachment meta)
+
+**`career` CPT** — Admin can add/edit:
+- Job Title, Location, Employment Type, Apply Link
+
+#### [NEW] Meta Boxes (in `functions.php`)
+
+Native WordPress meta boxes (no plugin required):
+- **Project Details**: Category, Year, Status (Completed/Upcoming), Description
+- **Project Images**: Upload multiple images via WordPress media uploader
+- **Career Details**: Location, Type, Apply Link
+
+#### [NEW] Static Assets
+
+| File | Source |
+|---|---|
+| `assets/` folder | Copied from existing `assets/` (hero images) |
+| `js/script.js` | Existing [script.js](file:///c:/Users/SMIJITH/OneDrive/Civil-Web/Civil-Web/script.js) (scroll animations, nav) |
+
+---
+
+## Verification Plan
+
+### Manual Verification (step-by-step)
+
+Since this is a WordPress theme, verification is done via a local WordPress server:
+
+1. **Install WordPress locally** using [LocalWP (free)](https://localwp.com/) or WAMP/XAMPP.
+2. **Copy theme**: Place the generated `aibel-builders-theme/` folder into `wp-content/themes/`.
+3. **Activate theme**: Go to WordPress Admin → Appearance → Themes → Activate *Aibel Builders*.
+4. **Create pages**: In WordPress Admin → Pages, create pages titled exactly:
+   - `Home`, `About`, `Projects`, [Gallery](file:///c:/Users/SMIJITH/OneDrive/Civil-Web/Civil-Web/gallery.html#205-249), `Careers`, `Contact`
+   - Set `Home` as the static front page under Settings → Reading.
+5. **Add a project**: Admin → Projects → Add New → Fill in title, category, year, description, select images, set status to *Completed* → Publish.
+6. **Add a career listing**: Admin → Careers → Add New → Fill in job title, location, type → Publish.
+7. **Visit the site**: Navigate to Projects, Gallery, and Careers pages to confirm dynamic content appears matching the admin entries.
+8. **Gallery auto-population**: Confirm the Gallery page shows images grouped by project name (sourced from project image meta).
