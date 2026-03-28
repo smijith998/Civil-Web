@@ -37,7 +37,7 @@ get_header();
                 </div>
             </div>
             <div class="about-image-wrapper reveal fade-left">
-                <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/founder/Dibin Poulose.jpeg" alt="Founder - Dibin Poulose" class="about-img">
+                <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/founder/dibin_poulose.jpeg" alt="Founder - Dibin Poulose" class="about-img">
             </div>
         </div>
     </div>
