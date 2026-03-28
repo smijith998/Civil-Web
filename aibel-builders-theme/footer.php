@@ -9,7 +9,7 @@
                     <div class="social-links">
                         <a href="https://www.instagram.com/aibel_builders?igsh=enByMnpldDdrdDdt" target="_blank">Instagram</a>
                         <a href="#">LinkedIn</a>
-                        <a href="#">Facebook</a>
+                        <a href="https://www.facebook.com/profile.php?id=61579696347119" target="_blank">Facebook</a>
                     </div>
                 </div>
 

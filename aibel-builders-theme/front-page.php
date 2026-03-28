@@ -35,7 +35,7 @@ get_header();
                     <p>"Architecture is not just about building walls; it's about crafting the silence between them."</p>
                     <span>- The Founders</span>
                 </div>
-                <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/assets/arch_project2.png" alt="Aibel Builders Studio" class="about-img">
+                <img src="<?php echo esc_url( get_template_directory_uri() ); ?>/founder/Dibin Poulose.jpeg" alt="Founder - Dibin Poulose" class="about-img">
             </div>
         </div>
     </div>
