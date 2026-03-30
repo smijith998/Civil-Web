@@ -442,3 +442,115 @@ window.exportProjectData = function() {
     
     alert("Project data exported! Please replace the existing 'projects-data.js' file with this one and then run the 1-Click-Upload tool.");
 };
+
+// --- Team Carousel Logic (Coverflow) ---
+document.addEventListener('DOMContentLoaded', () => {
+    const teamCarousel = document.getElementById('team-carousel');
+    const prevBtn = document.getElementById('team-prev');
+    const nextBtn = document.getElementById('team-next');
+    
+    if (teamCarousel) {
+        // Filenames from the employees directory
+        const employeeFiles = [
+            "Arya Anush-Accounts Manager.jpeg",
+            "Asika NB-Civil Draftsman and site supervisor.jpeg",
+            "Astin jose- Site Supervisor.jpeg",
+            "Jinu Jossy-Marketing Manger.jpeg",
+            "Sayooj VS-Project manager.jpeg",
+            "Seli Huraira Beegum K-Marketing Manager.jpeg",
+            "Sona KM-#D visualizer & Site Supervisor.jpeg",
+            "Srijith Vijayan-Site manager.jpeg",
+            "Sunilkumar EN-site engineer.jpeg"
+        ];
+
+        // Format string properly
+        function capitalizeWords(str) {
+            return str.split(' ').map(word => {
+                if (word.length === 0) return word;
+                if (word.toLowerCase() === 'and') return 'and';
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            }).join(' ');
+        }
+
+        const cards = [];
+
+        employeeFiles.forEach((filename, index) => {
+            const nameWithoutExt = filename.substring(0, filename.lastIndexOf('.'));
+            const parts = nameWithoutExt.split('-');
+            
+            let name = parts[0] ? parts[0].trim() : 'Team Member';
+            let title = parts[1] ? parts[1].trim() : '';
+            
+            if (title.includes('#D')) {
+                title = title.replace('#D', '3D');
+            }
+            if (title.toLowerCase().includes('manger')) {
+                title = title.replace(/manger/i, 'Manager');
+            }
+            
+            title = capitalizeWords(title);
+
+            const memberCard = document.createElement('div');
+            memberCard.className = 'team-member';
+            memberCard.innerHTML = `
+                <div class="team-member-img-wrapper">
+                    <img src="employees/${encodeURIComponent(filename)}" alt="${name}">
+                </div>
+                <div class="team-member-info">
+                    <h3>${name}</h3>
+                    <span>${title}</span>
+                </div>
+            `;
+            
+            // Allow clicking a side card to make it active
+            memberCard.addEventListener('click', () => {
+                updateCarousel(index);
+            });
+            
+            teamCarousel.appendChild(memberCard);
+            cards.push(memberCard);
+        });
+
+        let currentIndex = Math.floor(cards.length / 2); // Start near the middle
+
+        function updateCarousel(newIndex) {
+            if (cards.length === 0) return;
+            
+            // Handle wrapping
+            if (newIndex < 0) newIndex = cards.length - 1;
+            if (newIndex >= cards.length) newIndex = 0;
+            
+            currentIndex = newIndex;
+
+            cards.forEach((card, i) => {
+                card.className = 'team-member'; // Reset classes
+                
+                // Calculate distance considering wrap-around
+                let diff = (i - currentIndex + cards.length) % cards.length;
+               
+                // Wrap logic for determining left vs right
+                if (diff > cards.length / 2) {
+                    diff -= cards.length;
+                }
+                
+                if (diff === 0) {
+                    card.classList.add('active');
+                } else if (diff === -1) {
+                    card.classList.add('prev');
+                } else if (diff === 1) {
+                    card.classList.add('next');
+                } else if (diff === -2) {
+                    card.classList.add('prev-prev');
+                } else if (diff === 2) {
+                    card.classList.add('next-next');
+                }
+            });
+        }
+
+        if(prevBtn) prevBtn.addEventListener('click', () => updateCarousel(currentIndex - 1));
+        if(nextBtn) nextBtn.addEventListener('click', () => updateCarousel(currentIndex + 1));
+
+        // Initial setup
+        updateCarousel(currentIndex);
+    }
+});
