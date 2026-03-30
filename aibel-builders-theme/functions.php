@@ -56,7 +56,7 @@ function aibel_register_post_types() {
         ],
         'public'              => true,
         'has_archive'         => false,
-        'rewrite'             => [ 'slug' => 'project' ],
+        'rewrite'             => [ 'slug' => 'aibel-project' ],
         'supports'            => [ 'title', 'thumbnail' ],
         'show_in_rest'        => true,
         'menu_icon'           => 'dashicons-building',
@@ -80,7 +80,7 @@ function aibel_register_post_types() {
         ],
         'public'              => true,
         'has_archive'         => false,
-        'rewrite'             => [ 'slug' => 'career' ],
+        'rewrite'             => [ 'slug' => 'aibel-career' ],
         'supports'            => [ 'title' ],
         'show_in_rest'        => true,
         'menu_icon'           => 'dashicons-id',
@@ -332,4 +332,34 @@ function aibel_get_project_images( $post_id ) {
 function aibel_get_project_thumbnail( $post_id ) {
     $images = aibel_get_project_images( $post_id );
     return $images ? $images[0] : get_template_directory_uri() . '/assets/arch_project1.png';
+}
+
+// ============================================================
+// 7. FORCE CORRECT TEMPLATES BY PAGE SLUG
+//    This bypasses manual template assignment in WP Admin.
+//    As long as pages exist with the correct slugs, the right
+//    template is automatically loaded.
+// ============================================================
+add_filter( 'template_include', 'aibel_force_page_templates' );
+function aibel_force_page_templates( $template ) {
+    if ( ! is_page() ) return $template;
+
+    $slug_map = [
+        'about'    => 'page-about.php',
+        'projects' => 'page-projects.php',
+        'gallery'  => 'page-gallery.php',
+        'careers'  => 'page-careers.php',
+        'contact'  => 'page-contact.php',
+    ];
+
+    $slug = get_post_field( 'post_name', get_queried_object_id() );
+
+    if ( isset( $slug_map[ $slug ] ) ) {
+        $custom_template = get_template_directory() . '/' . $slug_map[ $slug ];
+        if ( file_exists( $custom_template ) ) {
+            return $custom_template;
+        }
+    }
+
+    return $template;
 }

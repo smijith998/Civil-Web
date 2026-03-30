@@ -46,10 +46,7 @@ get_header();
                         <p style="margin-top:0.5rem; font-size:0.95rem; color:var(--text-muted); max-width:500px;"><?php echo esc_html( $description ); ?></p>
                         <?php endif; ?>
                     </div>
-                    <?php
-                    $apply_href = $apply_link ? esc_url( $apply_link ) : esc_url( get_page_link( get_page_by_path('contact') ) );
-                    ?>
-                    <a href="<?php echo $apply_href; ?>" class="btn-outline">Apply Now</a>
+                    <button class="btn-outline apply-btn" data-role="<?php echo esc_attr( get_the_title() ); ?>">Apply Now</button>
                 </div>
                 <?php
                     endwhile;
@@ -60,6 +57,37 @@ get_header();
                 </p>
                 <?php endif; ?>
             </div>
+            
+            <!-- Application Form -->
+            <div id="application-container" class="application-container">
+                <h3 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Apply Now</h3>
+                <p style="margin-bottom: 2rem;">Fill in the form below and we'll be in touch.</p>
+                <form id="careerForm" class="glass-form" action="https://formspree.io/f/xykbwzkk" method="POST">
+                    <input type="hidden" name="_subject" value="New Job Application - Aibel Builders">
+                    <div class="input-group">
+                        <input type="text" name="name" placeholder=" " required>
+                        <label>Full Name</label>
+                    </div>
+                    <div class="input-group">
+                        <input type="email" name="email" placeholder=" " required>
+                        <label>Email Address</label>
+                    </div>
+                    <div class="input-group">
+                        <input type="tel" name="phone" placeholder=" ">
+                        <label>Phone Number</label>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" name="position" placeholder=" " required>
+                        <label>Position Applying For</label>
+                    </div>
+                    <div class="input-group">
+                        <textarea name="message" placeholder=" " rows="4" style="resize: vertical;"></textarea>
+                        <label>Cover Letter / Message</label>
+                    </div>
+                    <button type="submit" class="btn btn-full" style="margin-top: 1rem;">Submit Application</button>
+                </form>
+            </div>
+
         </div>
     </div>
 </section>

@@ -12,32 +12,85 @@
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Gallery specific styles */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 3rem;
-        }
-
-        .gallery-item {
+        /* Gallery Carousels */
+        .carousel-container {
             position: relative;
+            width: 100%;
+            height: 500px;
             overflow: hidden;
-            border-radius: 4px;
-            cursor: pointer;
-            aspect-ratio: 1;
-            /* Square thumbnails */
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
-        .gallery-item img {
+        @media (max-width: 768px) {
+            .carousel-container {
+                height: 350px;
+            }
+        }
+
+        .carousel-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            z-index: 1;
+        }
+
+        .carousel-slide.active {
+            opacity: 1;
+            z-index: 2;
+        }
+
+        .carousel-slide img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            cursor: pointer;
             transition: transform 0.6s ease;
         }
 
-        .gallery-item:hover img {
-            transform: scale(1.08);
+        .carousel-slide img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Carousel Navigation Buttons */
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 12px;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 10;
+            transition: background-color 0.3s ease;
+            user-select: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .carousel-btn:hover {
+            background-color: var(--accent, #c0a062);
+            color: #000;
+        }
+
+        .prev-btn {
+            left: 15px;
+        }
+
+        .next-btn {
+            right: 15px;
         }
 
         /* Modal styling for lightbox */
@@ -240,25 +293,53 @@
                 title.innerText = project.title;
                 section.appendChild(title);
 
-                // Add images grid
-                const grid = document.createElement('div');
-                grid.className = 'gallery-grid';
-                grid.style.marginTop = '1.5rem';
-                
-                project.images.forEach(imgSrc => {
-                    const item = document.createElement('div');
-                    item.className = 'gallery-item reveal active fade-up';
-                    item.onclick = () => openLightbox(imgSrc);
+                // Create Carousel Container
+                const carousel = document.createElement('div');
+                carousel.className = 'carousel-container reveal fade-up active';
+
+                let currentSlide = 0;
+                const slideElements = [];
+
+                project.images.forEach((imgSrc, index) => {
+                    const slide = document.createElement('div');
+                    slide.className = 'carousel-slide';
+                    if (index === 0) slide.classList.add('active');
 
                     const img = document.createElement('img');
                     img.src = imgSrc;
                     img.alt = project.title;
+                    img.onclick = () => openLightbox(imgSrc);
 
-                    item.appendChild(img);
-                    grid.appendChild(item);
+                    slide.appendChild(img);
+                    carousel.appendChild(slide);
+                    slideElements.push(slide);
                 });
 
-                section.appendChild(grid);
+                // Add Next/Prev Buttons if more than 1 image
+                if (slideElements.length > 1) {
+                    const prevBtn = document.createElement('button');
+                    prevBtn.className = 'carousel-btn prev-btn';
+                    prevBtn.innerHTML = '&#10094;';
+                    prevBtn.onclick = () => {
+                        slideElements[currentSlide].classList.remove('active');
+                        currentSlide = (currentSlide - 1 + slideElements.length) % slideElements.length;
+                        slideElements[currentSlide].classList.add('active');
+                    };
+
+                    const nextBtn = document.createElement('button');
+                    nextBtn.className = 'carousel-btn next-btn';
+                    nextBtn.innerHTML = '&#10095;';
+                    nextBtn.onclick = () => {
+                        slideElements[currentSlide].classList.remove('active');
+                        currentSlide = (currentSlide + 1) % slideElements.length;
+                        slideElements[currentSlide].classList.add('active');
+                    };
+
+                    carousel.appendChild(prevBtn);
+                    carousel.appendChild(nextBtn);
+                }
+
+                section.appendChild(carousel);
                 galleryContainer.appendChild(section);
             });
         }
