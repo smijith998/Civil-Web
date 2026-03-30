@@ -148,28 +148,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Dynamic Projects Rendering ---
     
-    // Render Featured Projects (Home Page)
-    const featuredProjectsGrid = document.getElementById('featured-projects-grid');
-    if (featuredProjectsGrid && typeof aibelProjects !== 'undefined') {
-        const featured = aibelProjects.slice(0, 2);
-        featured.forEach((project, index) => {
-            const delay = index + 1;
-            const card = document.createElement('div');
-            card.className = `project-card reveal fade-up delay-${delay}`;
-            card.innerHTML = `
-                <div class="project-img-wrapper">
-                    <img src="${project.images[0]}" alt="${project.title}">
-                    <div class="project-overlay">
-                        <a href="projects.html" class="view-btn">View Details</a>
-                    </div>
-                </div>
-                <div class="project-info">
+    // Render Featured Projects Slider (Home Page)
+    const featuredSlider = document.getElementById('featured-slider');
+    if (featuredSlider && typeof aibelProjects !== 'undefined' && aibelProjects.length > 0) {
+        let slideIndex = 0;
+        let slideInterval;
+        const slides = [];
+
+        aibelProjects.forEach((project, index) => {
+            const slide = document.createElement('div');
+            slide.className = index === 0 ? 'featured-slide active' : 'featured-slide';
+            slide.style.backgroundImage = `url('${project.images[0].replace(/'/g, "\\'")}')`;
+            
+            slide.innerHTML = `
+                <div class="featured-caption">
                     <h3>${project.title}</h3>
                     <span>${project.category} / ${project.year}</span>
+                    <a href="projects.html" class="view-btn" style="margin-top: 1.5rem; display: inline-block;">View Gallery</a>
                 </div>
             `;
-            featuredProjectsGrid.appendChild(card);
+            // Append slide BEFORE the buttons so it's under them based on structure
+            featuredSlider.insertBefore(slide, featuredSlider.firstChild);
+            slides.push(slide); // Array order will be reversed if insertBefore is used naively, let's reverse to fix order or use append before nav
         });
+        
+        // Fix chronological order since we used insertBefore
+        slides.reverse();
+
+        function showSlide(index) {
+            if (slides.length === 0) return;
+            slides.forEach(s => s.classList.remove('active'));
+            slideIndex = (index + slides.length) % slides.length;
+            slides[slideIndex].classList.add('active');
+        }
+
+        function startAutoPlay() {
+            if (slides.length <= 1) return;
+            clearInterval(slideInterval);
+            slideInterval = setInterval(() => {
+                showSlide(slideIndex + 1);
+            }, 6000); // 6 seconds
+        }
+
+        const prevBtn = document.getElementById('featured-prev');
+        const nextBtn = document.getElementById('featured-next');
+
+        if (prevBtn && nextBtn) {
+            prevBtn.addEventListener('click', () => {
+                showSlide(slideIndex - 1);
+                startAutoPlay(); // Reset timer upon user interaction
+            });
+            nextBtn.addEventListener('click', () => {
+                showSlide(slideIndex + 1);
+                startAutoPlay(); // Reset timer upon user interaction
+            });
+        }
+        
+        startAutoPlay();
     }
 
     // --- Local Storage Project Merging ---
