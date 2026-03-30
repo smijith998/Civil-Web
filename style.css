@@ -658,6 +658,22 @@ section p {
     font-size: 0.9rem;
 }
 
+.application-container {
+    margin-top: 4rem;
+    border-top: 1px solid var(--glass-border);
+    padding-top: 0;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.6s ease-in-out, opacity 0.6s ease-in-out, padding-top 0.6s ease-in-out;
+}
+
+.application-container.active {
+    padding-top: 3rem;
+    max-height: 1200px;
+    opacity: 1;
+}
+
 /* Contact Section */
 .contact-grid {
     display: grid;

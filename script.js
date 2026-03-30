@@ -120,6 +120,32 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Careers Application Form Logic ---
+    const applyBtns = document.querySelectorAll('.apply-btn');
+    const appContainer = document.getElementById('application-container');
+    const positionInput = document.querySelector('#careerForm input[name="position"]');
+    
+    if (applyBtns.length > 0 && appContainer && positionInput) {
+        applyBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const role = e.target.getAttribute('data-role');
+                
+                // Set the input value
+                positionInput.value = role;
+                // Add a class that simulates the floating label focus/not empty state
+                positionInput.setAttribute('value', role); // ensures CSS :not(:placeholder-shown) triggers if used this way, or just let required do its job usually
+                
+                // Expand container
+                appContainer.classList.add('active');
+                
+                // Scroll to form smoothly
+                setTimeout(() => {
+                    appContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            });
+        });
+    }
+
     // --- Dynamic Projects Rendering ---
     
     // Render Featured Projects (Home Page)
@@ -191,7 +217,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             block.innerHTML = `
                 <div class="project-head" style="margin-bottom: 2rem; position: relative;">
-                    <button onclick="openAdminModal('${project.id}')" class="btn-outline" style="position: absolute; right: 0; top: 0; padding: 0.5rem 1rem; font-size: 0.7rem; border-color: var(--accent); color: var(--accent);">Edit Project</button>
                     <h2 style="font-size: 2.5rem; color: var(--accent); margin-bottom: 0.5rem; padding-right: 6rem;">${project.title}</h2>
                     <span style="display:block; color: var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom: 1rem;">${project.category} / ${project.year}</span>
                     <p style="max-width: 800px; font-size: 1.1rem; color: var(--text-main); margin-bottom: 2rem;">${project.description}</p>
