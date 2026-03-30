@@ -455,11 +455,11 @@ document.addEventListener('DOMContentLoaded', () => {
             "Arya Anush-Accounts Manager.jpeg",
             "Asika NB-Civil Draftsman and site supervisor.jpeg",
             "Astin jose- Site Supervisor.jpeg",
-            "Jinu Jossy-Marketing Manger.jpeg",
+            "Jinu Jossy-Marketing Director.jpeg",
             "Sayooj VS-Project manager.jpeg",
             "Seli Huraira Beegum K-Marketing Manager.jpeg",
             "Sona KM-#D visualizer & Site Supervisor.jpeg",
-            "Srijith Vijayan-Site manager.jpeg",
+            "Srijith Vijayan-Site Engineer.jpeg",
             "Sunilkumar EN-site engineer.jpeg"
         ];
 
@@ -492,6 +492,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const memberCard = document.createElement('div');
             memberCard.className = 'team-member';
+            memberCard.dataset.title = title;
             memberCard.innerHTML = `
                 <div class="team-member-img-wrapper">
                     <img src="employees/${encodeURIComponent(filename)}" alt="${name}">
@@ -511,7 +512,9 @@ document.addEventListener('DOMContentLoaded', () => {
             cards.push(memberCard);
         });
 
-        let currentIndex = Math.floor(cards.length / 2); // Start near the middle
+        // Default State: Start with 'Marketing Director'
+        let currentIndex = cards.findIndex(card => card.dataset.title === 'Marketing Director');
+        if (currentIndex === -1) currentIndex = Math.floor(cards.length / 2); // Fallback
 
         function updateCarousel(newIndex) {
             if (cards.length === 0) return;
