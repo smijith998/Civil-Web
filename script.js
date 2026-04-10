@@ -277,6 +277,44 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Interior Carousel Logic
+    const interiorCarousel = document.getElementById('interior-carousel');
+    if (interiorCarousel) {
+        const interiorSlides = interiorCarousel.querySelectorAll('.interior-slide');
+        const intPrevBtn = document.getElementById('interior-prev');
+        const intNextBtn = document.getElementById('interior-next');
+        let intSlideIndex = 0;
+        let intSlideInterval;
+
+        function showIntSlide(index) {
+            if (interiorSlides.length === 0) return;
+            interiorSlides.forEach(s => s.style.opacity = '0');
+            intSlideIndex = (index + interiorSlides.length) % interiorSlides.length;
+            interiorSlides[intSlideIndex].style.opacity = '1';
+        }
+
+        function startIntAutoPlay() {
+            if (interiorSlides.length <= 1) return;
+            clearInterval(intSlideInterval);
+            intSlideInterval = setInterval(() => {
+                showIntSlide(intSlideIndex + 1);
+            }, 5000);
+        }
+
+        if (intPrevBtn && intNextBtn) {
+            intPrevBtn.addEventListener('click', () => {
+                showIntSlide(intSlideIndex - 1);
+                startIntAutoPlay();
+            });
+            intNextBtn.addEventListener('click', () => {
+                showIntSlide(intSlideIndex + 1);
+                startIntAutoPlay();
+            });
+        }
+        
+        startIntAutoPlay();
+    }
 });
 
 // --- Project Modal Functions ---
