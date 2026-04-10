@@ -245,8 +245,9 @@ document.addEventListener('DOMContentLoaded', () => {
             
             let imagesHtml = '';
             if (project.images && project.images.length > 0) {
-                project.images.forEach(img => {
-                    imagesHtml += `<div class="gallery-item" onclick="if(typeof openLightbox === 'function') openLightbox('${img}')"><img src="${img}" alt="${project.title}" style="width:100%; height:100%; object-fit:cover; aspect-ratio:1; cursor:pointer;"></div>`;
+                const encodedImages = encodeURIComponent(JSON.stringify(project.images)).replace(/'/g, "%27");
+                project.images.forEach((img, idx) => {
+                    imagesHtml += `<div class="gallery-item" onclick="openGlobalLightbox(decodeURIComponent('${encodedImages}'), ${idx})"><img src="${img}" alt="${project.title}" style="width:100%; height:100%; object-fit:cover; aspect-ratio:1; cursor:pointer;"></div>`;
                 });
             }
 
@@ -655,3 +656,77 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCarousel(currentIndex);
     }
 });
+
+// --- Global Lightbox ---
+window.lightboxImages = [];
+window.lightboxIndex = 0;
+
+window.openGlobalLightbox = function(imagesJson, startIndex) {
+    window.lightboxImages = JSON.parse(imagesJson);
+    window.lightboxIndex = startIndex;
+    
+    let lb = document.getElementById('globalLightbox');
+    if (!lb) {
+        lb = document.createElement('div');
+        lb.className = 'lightbox';
+        lb.id = 'globalLightbox';
+        lb.innerHTML = `
+            <span class="lightbox-close" onclick="closeGlobalLightbox()">&times;</span>
+            <img id="globalLightboxImg" src="" alt="Expanded Image" style="max-height: 85vh; max-width: 90vw; object-fit: contain;">
+            <button class="carousel-btn prev-btn" id="lb-prev-btn" onclick="prevGlobalLightbox(event)" style="position: fixed; left: 20px;">&#10094;</button>
+            <button class="carousel-btn next-btn" id="lb-next-btn" onclick="nextGlobalLightbox(event)" style="position: fixed; right: 20px;">&#10095;</button>
+        `;
+        document.body.appendChild(lb);
+        lb.addEventListener('click', function(e) {
+            if (e.target === this) closeGlobalLightbox();
+        });
+        
+        // Keydown support for lightbox
+        document.addEventListener('keydown', function(e) {
+            if (!lb.classList.contains('active')) return;
+            if (e.key === 'ArrowLeft') prevGlobalLightbox();
+            if (e.key === 'ArrowRight') nextGlobalLightbox();
+            if (e.key === 'Escape') closeGlobalLightbox();
+        });
+    }
+    
+    updateGlobalLightboxImage();
+    lb.classList.add('active');
+};
+
+window.updateGlobalLightboxImage = function() {
+    const imgElement = document.getElementById('globalLightboxImg');
+    if (imgElement && window.lightboxImages.length > 0) {
+        imgElement.src = window.lightboxImages[window.lightboxIndex];
+    }
+    
+    // Hide buttons if only 1 image
+    const prevBtn = document.getElementById('lb-prev-btn');
+    const nextBtn = document.getElementById('lb-next-btn');
+    if (window.lightboxImages.length <= 1) {
+        prevBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+    } else {
+        prevBtn.style.display = 'flex';
+        nextBtn.style.display = 'flex';
+    }
+};
+
+window.prevGlobalLightbox = function(e) {
+    if (e) e.stopPropagation();
+    if (window.lightboxImages.length <= 1) return;
+    window.lightboxIndex = (window.lightboxIndex - 1 + window.lightboxImages.length) % window.lightboxImages.length;
+    updateGlobalLightboxImage();
+};
+
+window.nextGlobalLightbox = function(e) {
+    if (e) e.stopPropagation();
+    if (window.lightboxImages.length <= 1) return;
+    window.lightboxIndex = (window.lightboxIndex + 1) % window.lightboxImages.length;
+    updateGlobalLightboxImage();
+};
+
+window.closeGlobalLightbox = function() {
+    const lb = document.getElementById('globalLightbox');
+    if (lb) lb.classList.remove('active');
+};

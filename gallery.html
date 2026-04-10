@@ -308,7 +308,14 @@
                     const img = document.createElement('img');
                     img.src = imgSrc;
                     img.alt = project.title;
-                    img.onclick = () => openLightbox(imgSrc);
+                    const encodedImages = encodeURIComponent(JSON.stringify(project.images)).replace(/'/g, "%27");
+                    img.onclick = () => {
+                        if (typeof openGlobalLightbox === 'function') {
+                            openGlobalLightbox(decodeURIComponent(encodedImages), index);
+                        } else {
+                            openLightbox(imgSrc);
+                        }
+                    };
 
                     slide.appendChild(img);
                     carousel.appendChild(slide);
